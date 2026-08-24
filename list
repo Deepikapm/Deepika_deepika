@@ -1,0 +1,1225 @@
+list
+
+#ifndef STUDENT_H
+#define STUDENT_H
+
+
+struct Student {
+    int id;
+    char name[50];
+    int age;
+    char course[30];
+    float marks;
+    struct Student *next;
+
+};
+
+
+void insert();
+void insertAfter();
+void deleteStudent();
+void find();
+void print();
+void update();
+void swap();
+
+#endif
+
+main
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "header.h"
+
+
+struct Student *head = NULL;
+
+
+
+void insert() {
+    struct Student *newNode, *temp;
+
+
+    newNode = (struct Student *) malloc(sizeof(struct Student));
+
+
+    printf("Enter Student ID: ");
+    scanf("%d", &newNode->id);
+
+    printf("Enter Name: ");
+    scanf(" %[^\n]", newNode->name);   /* it will read a full line also including spaces */
+
+    printf("Enter Age: ");
+    scanf("%d", &newNode->age);
+
+    printf("Enter Course: ");
+    scanf(" %[^\n]", newNode->course);
+
+    printf("Enter Marks: ");
+    scanf("%f", &newNode->marks);
+
+    newNode->next = NULL;
+
+    /* checking if   a duplicate ID before i add node to list  */
+    temp = head;
+    while (temp != NULL) {
+        if (temp->id == newNode->id) {
+            printf("Student with this ID already exists!\n");
+            free(newNode);
+            return;
+        }
+        temp = temp->next;
+    }
+
+
+    if (head == NULL) {
+        head = newNode;
+    } else {
+
+        temp = head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+
+    printf("Student record is inserted successfully\n");
+}
+
+void insertAfter() {
+    int searchId;
+    struct Student *temp, *newNode;
+
+    if (head == NULL) {
+        printf("The list is empty so we Cannot insert.\n");
+        return;
+    }
+
+    printf("Enter the ID after which  to insert: ");
+    scanf("%d", &searchId);
+
+
+    temp = head;
+    while (temp != NULL && temp->id != searchId) {
+        temp = temp->next;
+    }
+
+    if (temp == NULL) {
+        printf("Student with ID %d not found.\n", searchId);
+        return;
+    }
+
+
+    newNode = (struct Student *) malloc(sizeof(struct Student));
+
+    printf("Enter New Student ID: ");
+    scanf("%d", &newNode->id);
+
+    printf("Enter Name: ");
+    scanf(" %[^\n]", newNode->name);
+
+    printf("Enter Age: ");
+    scanf("%d", &newNode->age);
+
+    printf("Enter Course: ");
+    scanf(" %[^\n]", newNode->course);
+
+    printf("Enter Marks: ");
+    scanf("%f", &newNode->marks);
+
+    newNode->next = temp->next;
+    temp->next = newNode;
+
+    printf("Student record inserted successfully after ID %d!\n", searchId);
+}
+
+
+
+void deleteStudent() {
+    int id;
+    struct Student *curr, *prev;
+
+    if (head == NULL) {
+        printf("The list is empty. Nothing to delete.\n");
+        return;
+    }
+
+    printf("Enter Student ID to delete: ");
+    scanf("%d", &id);
+
+    curr = head;
+    prev = NULL;
+
+
+    while (curr != NULL && curr->id != id) {
+        prev = curr;
+        curr = curr->next;
+    }
+
+    if (curr == NULL) {
+        printf("Student with ID %d not found.\n", id);
+        return;
+    }
+
+    if (prev == NULL) {
+
+        head = curr->next;
+    } else {
+
+        prev->next = curr->next;
+    }
+
+    free(curr);
+    printf("Student record deleted successfully\n");
+}
+
+
+
+void find() {
+    int id;
+    struct Student *temp;
+
+    if (head == NULL) {
+        printf("The list is empty.\n");
+        return;
+    }
+
+    printf("Enter Student ID to search: ");
+    scanf("%d", &id);
+
+    temp = head;
+    while (temp != NULL) {
+        if (temp->id == id) {
+            printf("\n%-8s%-20s%-6s%-15s%-8s\n", "ID", "Name", "Age", "Course", "Marks");
+            printf("--------------------------------------------------------\n");
+            printf("%-8d%-20s%-6d%-15s%-8.2f\n",
+                   temp->id, temp->name, temp->age, temp->course, temp->marks);
+            return;
+        }
+        temp = temp->next;
+    }
+
+    printf("Student with ID %d not found.\n", id);
+}
+
+void print() {
+    struct Student *temp;
+
+    if (head == NULL) {
+        printf("The list is empty.\n");
+        return;
+    }
+
+    temp = head;
+
+    printf("\n%-8s%-20s%-6s%-15s%-8s\n", "ID", "Name", "Age", "Course", "Marks");
+    printf("--------------------------------------------------------\n");
+
+    while (temp != NULL) {
+        printf("%-8d%-20s%-6d%-15s%-8.2f\n",
+               temp->id, temp->name, temp->age, temp->course, temp->marks);
+        temp = temp->next;   /* move pointer to next node */
+    }
+}
+
+/* ---------------------------------------------------
+   update()
+   Finds a student by ID and edits their details IN PLACE
+   --------------------------------------------------- */
+void update() {
+    int id, choice;
+    struct Student *temp;
+
+    if (head == NULL) {
+        printf("The list is empty. Nothing to update.\n");
+        return;
+    }
+
+    printf("Enter Student ID to update: ");
+    scanf("%d", &id);
+
+    temp = head;
+    while (temp != NULL && temp->id != id) {
+        temp = temp->next;
+    }
+
+    if (temp == NULL) {
+        printf("Student with ID %d not found.\n", id);
+        return;
+    }
+
+    printf("\nWhich field do you want to update?\n");
+    printf("1. Name\n");
+    printf("2. Age\n");
+    printf("3. Course\n");
+    printf("4. Marks\n");
+    printf("Enter your choice: ");
+    scanf("%d", &choice);
+
+    switch (choice) {
+        case 1:
+            printf("Enter new Name: ");
+            scanf(" %[^\n]", temp->name);
+            break;
+        case 2:
+            printf("Enter new Age: ");
+            scanf("%d", &temp->age);
+            break;
+        case 3:
+            printf("Enter new Course: ");
+            scanf(" %[^\n]", temp->course);
+            break;
+        case 4:
+            printf("Enter new Marks: ");
+            scanf("%f", &temp->marks);
+            break;
+        default:
+            printf("Invalid choice.\n");
+            return;
+    }
+
+    printf("Student record updated successfully\n");
+}
+
+/* ---------------------------------------------------
+   swap()
+   Swaps the data of two students by their IDs
+   --------------------------------------------------- */
+void swap() {
+    int id1, id2;
+    struct Student *first, *second;
+    struct Student tempData;
+
+    if (head == NULL) {
+        printf("empty list Nothing to swap.\n");
+        return;
+    }
+
+    printf("Enter first Student ID: ");
+    scanf("%d", &id1);
+    printf("Enter second Student ID: ");
+    scanf("%d", &id2);
+
+    if (id1 == id2) {
+        printf("Both IDs are the same. Nothing to swap.\n");
+        return;
+    }
+
+    /* Find first student */
+    first = head;
+    while (first != NULL && first->id != id1) {
+        first = first->next;
+    }
+
+
+    second = head;
+    while (second != NULL && second->id != id2) {
+        second = second->next;
+    }
+
+    if (first == NULL || second == NULL) {
+        printf("One or both IDs not found.\n");
+        return;
+    }
+
+    tempData.id = first->id;
+    strcpy(tempData.name, first->name);
+    tempData.age = first->age;
+    strcpy(tempData.course, first->course);
+    tempData.marks = first->marks;
+
+    first->id = second->id;
+    strcpy(first->name, second->name);
+    first->age = second->age;
+    strcpy(first->course, second->course);
+    first->marks = second->marks;
+
+    second->id = tempData.id;
+    strcpy(second->name, tempData.name);
+    second->age = tempData.age;
+    strcpy(second->course, tempData.course);
+    second->marks = tempData.marks;
+
+    printf("Student records swapped \n");
+}
+
+
+
+int main() {
+    int choice;
+
+    do {
+        printf("\n STUDENT DATABASE \n");
+        printf("1. Insert Student\n");
+        printf("2. Insert After\n");
+        printf("3. Delete Student\n");
+        printf("4. Find Student\n");
+        printf("5. Print All Students\n");
+        printf("6. update\n");
+        printf("7. swap\n");
+        printf("8. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1: insert(); break;
+            case 2: insertAfter(); break;
+            case 3: deleteStudent(); break;
+            case 4: find(); break;
+            case 5: print(); break;
+            case 6: update(); break;
+            case 7: swap(); break;
+            case 8: printf("Exiting the  program \n"); break;
+
+            default: printf("Invalid choice .\n");
+        }
+
+    } while (choice != 7);
+
+    return 0;
+}
+
+
+
+
+
+DLL
+#ifndef STUDENT_H
+#define STUDENT_H
+
+
+
+struct Student {
+    int id;
+    char name[50];
+    int age;
+    char course[30];
+    float marks;
+
+    struct Student *next;   /* this is pointer pointing to next student */
+    struct Student *prev;   /* pointer that is pointing to the previous student */
+};
+
+
+void insert();
+void insertAfter();
+void deleteStudent();
+void find();
+void print();
+void update();
+void swap();
+
+#endif
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "header.h"
+
+
+
+struct Student *head = NULL;
+
+
+
+void insert()
+{
+    struct Student *newNode, *temp;
+
+
+    newNode = (struct Student *)malloc(sizeof(struct Student));
+
+    if (newNode == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+
+    printf("Enter Student ID: ");
+    scanf("%d", &newNode->id);
+
+    printf("Enter Name: ");
+    scanf(" %[^\n]", newNode->name);
+
+    printf("Enter Age: ");
+    scanf("%d", &newNode->age);
+
+    printf("Enter Course: ");
+    scanf(" %[^\n]", newNode->course);
+
+    printf("Enter Marks: ");
+    scanf("%f", &newNode->marks);
+
+
+    newNode->next = NULL;
+    newNode->prev = NULL;
+
+
+
+    temp = head;
+
+    while (temp != NULL)
+    {
+        if (temp->id == newNode->id)
+        {
+            printf("Student with this ID already exists!\n");
+            free(newNode);
+            return;
+        }
+
+        temp = temp->next;
+    }
+
+
+
+    if (head == NULL)
+    {
+        head = newNode;
+    }
+    else
+    {
+
+        temp = head;
+
+        while (temp->next != NULL)
+        {
+            temp = temp->next;
+        }
+
+
+        temp->next = newNode;
+        newNode->prev = temp;
+    }
+
+    printf("Student record inserted successfully!\n");
+}
+
+
+/* insertAfter() --> it will insert a new student after
+    student id which is given by user*/
+
+void insertAfter()
+{
+    int searchId;
+    struct Student *temp, *newNode;
+
+    if (head == NULL)
+    {
+        printf("The list is empty. Cannot insert.\n");
+        return;
+    }
+
+    printf("Enter the ID after which to insert: ");
+    scanf("%d", &searchId);
+
+
+    temp = head;
+
+    while (temp != NULL && temp->id != searchId)
+    {
+        temp = temp->next;
+    }
+
+
+    if (temp == NULL)
+    {
+        printf("Student with ID %d not found.\n", searchId);
+        return;
+    }
+
+
+    newNode = (struct Student *)malloc(sizeof(struct Student));
+
+    if (newNode == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+
+
+    printf("Enter New Student ID: ");
+    scanf("%d", &newNode->id);
+
+    printf("Enter Name: ");
+    scanf(" %[^\n]", newNode->name);
+
+    printf("Enter Age: ");
+    scanf("%d", &newNode->age);
+
+    printf("Enter Course: ");
+    scanf(" %[^\n]", newNode->course);
+
+    printf("Enter Marks: ");
+    scanf("%f", &newNode->marks);
+
+
+    /* Doubly linked list connection */
+
+    newNode->next = temp->next;
+    newNode->prev = temp;
+
+    if (temp->next != NULL)
+    {
+        temp->next->prev = newNode;
+    }
+
+    temp->next = newNode;
+
+
+    printf("Student record inserted successfully after ID %d!\n",
+           searchId);
+}
+
+
+
+
+void deleteStudent()
+{
+    int id;
+    struct Student *curr;
+
+    if (head == NULL)
+    {
+        printf("The list is empty. Nothing to delete.\n");
+        return;
+    }
+
+    printf("Enter Student ID to delete: ");
+    scanf("%d", &id);
+
+
+
+    curr = head;
+
+    while (curr != NULL && curr->id != id)
+    {
+        curr = curr->next;
+    }
+
+
+    if (curr == NULL)
+    {
+        printf("Student with ID %d not found.\n", id);
+        return;
+    }
+
+
+
+    if (curr->prev == NULL)
+    {
+        head = curr->next;
+
+        if (head != NULL)
+        {
+            head->prev = NULL;
+        }
+    }
+
+
+
+
+    else
+    {
+        curr->prev->next = curr->next;
+
+        if (curr->next != NULL)
+        {
+            curr->next->prev = curr->prev;
+        }
+    }
+
+
+    free(curr);
+
+    printf("Student record deleted successfully!\n");
+}
+
+
+
+void find()
+{
+    int id;
+    struct Student *temp;
+
+    if (head == NULL)
+    {
+        printf("The list is empty.\n");
+        return;
+    }
+
+    printf("Enter Student ID to search: ");
+    scanf("%d", &id);
+
+
+    temp = head;
+
+    while (temp != NULL)
+    {
+        if (temp->id == id)
+        {
+            printf("\n%-8s%-20s%-6s%-15s%-8s\n",
+                   "ID", "Name", "Age", "Course", "Marks");
+
+            printf("--------------------------------------------------------\n");
+
+            printf("%-8d%-20s%-6d%-15s%-8.2f\n",
+                   temp->id,
+                   temp->name,
+                   temp->age,
+                   temp->course,
+                   temp->marks);
+
+            return;
+        }
+
+        temp = temp->next;
+    }
+
+
+    printf("Student with ID %d not found.\n", id);
+}
+
+
+/*  print ---> function prints all students */
+
+
+
+void print()
+{
+    struct Student *temp;
+
+    if (head == NULL)
+    {
+        printf("The list is empty.\n");
+        return;
+    }
+
+
+    temp = head;
+
+    printf("\n%-8s%-20s%-6s%-15s%-8s\n",
+           "ID", "Name", "Age", "Course", "Marks");
+
+    printf("--------------------------------------------------------\n");
+
+
+    while (temp != NULL)
+    {
+        printf("%-8d%-20s%-6d%-15s%-8.2f\n",
+               temp->id,
+               temp->name,
+               temp->age,
+               temp->course,
+               temp->marks);
+
+        temp = temp->next;
+    }
+}
+
+
+
+
+void update()
+{
+    int id, choice;
+    struct Student *temp;
+
+    if (head == NULL)
+    {
+        printf("The list is empty. Nothing to update.\n");
+        return;
+    }
+
+    printf("Enter Student ID to update: ");
+    scanf("%d", &id);
+
+
+    temp = head;
+
+    while (temp != NULL && temp->id != id)
+    {
+        temp = temp->next;
+    }
+
+
+    if (temp == NULL)
+    {
+        printf("Student with ID %d not found.\n", id);
+        return;
+    }
+
+
+    printf("\nWhich field do you want to update?\n");
+
+    printf("1. Name\n");
+    printf("2. Age\n");
+    printf("3. Course\n");
+    printf("4. Marks\n");
+
+    printf("Enter your choice: ");
+    scanf("%d", &choice);
+
+
+    switch (choice)
+    {
+        case 1:
+            printf("Enter new Name: ");
+            scanf(" %[^\n]", temp->name);
+            break;
+
+        case 2:
+            printf("Enter new Age: ");
+            scanf("%d", &temp->age);
+            break;
+
+        case 3:
+            printf("Enter new Course: ");
+            scanf(" %[^\n]", temp->course);
+            break;
+
+        case 4:
+            printf("Enter new Marks: ");
+            scanf("%f", &temp->marks);
+            break;
+
+        default:
+            printf("Invalid choice.\n");
+            return;
+    }
+
+
+    printf("Student record updated successfully!\n");
+}
+
+
+
+
+void swap()
+{
+    int id1, id2;
+
+    struct Student *first;
+    struct Student *second;
+
+    struct Student tempData;
+
+
+    if (head == NULL)
+    {
+        printf("The list is empty. Nothing to swap.\n");
+        return;
+    }
+
+
+    printf("Enter first Student ID: ");
+    scanf("%d", &id1);
+
+    printf("Enter second Student ID: ");
+    scanf("%d", &id2);
+
+
+    if (id1 == id2)
+    {
+        printf("Both IDs are the same. Nothing to swap.\n");
+        return;
+    }
+
+
+    first = head;
+
+    while (first != NULL && first->id != id1)
+    {
+        first = first->next;
+    }
+
+
+
+    second = head;
+
+    while (second != NULL && second->id != id2)
+    {
+        second = second->next;
+    }
+
+
+    if (first == NULL || second == NULL)
+    {
+        printf("One or both IDs not found.\n");
+        return;
+    }
+
+
+
+    tempData.id = first->id;
+    strcpy(tempData.name, first->name);
+    tempData.age = first->age;
+    strcpy(tempData.course, first->course);
+    tempData.marks = first->marks;
+
+
+    first->id = second->id;
+    strcpy(first->name, second->name);
+    first->age = second->age;
+    strcpy(first->course, second->course);
+    first->marks = second->marks;
+
+
+    second->id = tempData.id;
+    strcpy(second->name, tempData.name);
+    second->age = tempData.age;
+    strcpy(second->course, tempData.course);
+    second->marks = tempData.marks;
+
+
+    printf("Student records swapped successfully!\n");
+}
+
+
+
+
+int main()
+{
+    int choice;
+
+    do
+    {
+        printf("\n===== STUDENT DATABASE - DOUBLY LINKED LIST =====\n");
+
+        printf("1. Insert Student\n");
+        printf("2. Insert After\n");
+        printf("3. Delete Student\n");
+        printf("4. Find Student\n");
+        printf("5. Print All Students\n");
+        printf("6. Update\n");
+        printf("7. Swap\n");
+        printf("8. Exit\n");
+
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+
+        switch (choice)
+        {
+            case 1:
+                insert();
+                break;
+
+            case 2:
+                insertAfter();
+                break;
+
+            case 3:
+                deleteStudent();
+                break;
+
+            case 4:
+                find();
+                break;
+
+            case 5:
+                print();
+                break;
+
+            case 6:
+                update();
+                break;
+
+            case 7:
+                swap();
+                break;
+
+            case 8:
+                printf("Exiting program. Goodbye!\n");
+                break;
+
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+
+    } while (choice != 8);
+
+
+    return 0;
+}
+
+
+
+
+
+stack
+#ifndef STACK_H
+#define STACK_H
+
+/* ---------------------------------------------------
+   Structure for one stack node.
+   Each node stores data and a pointer to the next node.
+   --------------------------------------------------- */
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+/* Function declarations */
+void push();
+void pop();
+void peek();
+void display();
+
+#endif /* STACK_H */
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "header.h"
+
+/* Global top pointer */
+struct Node *top = NULL;
+
+/* Push operation */
+void push() {
+    struct Node *newNode;
+    int value;
+
+    newNode = (struct Node *)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+
+    printf("Enter value to push: ");
+    scanf("%d", &value);
+
+    newNode->data = value;
+    newNode->next = top;  // link new node to previous top
+    top = newNode;        // update top
+
+    printf("%d pushed onto stack.\n", value);
+}
+
+/* Pop operation */
+void pop() {
+    if (top == NULL) {
+        printf("Stack underflow! Nothing to pop.\n");
+        return;
+    }
+
+    struct Node *temp = top;
+    printf("%d popped from stack.\n", temp->data);
+
+    top = top->next;  // move top down
+    free(temp);
+}
+
+/* Peek operation */
+void peek() {
+    if (top == NULL) {
+        printf("Stack is empty.\n");
+        return;
+    }
+
+    printf("Top element is: %d\n", top->data);
+}
+
+/* Display stack */
+void display() {
+    if (top == NULL) {
+        printf("Stack is empty.\n");
+        return;
+    }
+
+    struct Node *temp = top;
+    printf("Stack elements (top to bottom):\n");
+
+    while (temp != NULL) {
+        printf("%d\n", temp->data);
+        temp = temp->next;
+    }
+}
+
+/* Main menu */
+int main() {
+    int choice;
+
+    do {
+        printf("\n===== STACK USING LINKED LIST =====\n");
+        printf("1. Push\n");
+        printf("2. Pop\n");
+        printf("3. Peek\n");
+        printf("4. Display\n");
+        printf("5. Exit\n");
+
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                push();
+                break;
+            case 2:
+                pop();
+                break;
+            case 3:
+                peek();
+                break;
+            case 4:
+                display();
+                break;
+            case 5:
+                printf("Exiting program. Goodbye!\n");
+                break;
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    } while (choice != 5);
+
+    return 0;
+}
+
+
+QUEUE
+
+#ifndef QUEUE_H
+#define QUEUE_H
+
+/* ---------------------------------------------------
+   Structure for one queue node.
+   Each node stores data and a pointer to the next node.
+   --------------------------------------------------- */
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+/* Function declarations */
+void enqueue();
+void dequeue();
+void peek();
+void display();
+
+#endif /* QUEUE_H */
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "header.h"
+
+/* Global front and rear pointers */
+struct Node *front = NULL;
+struct Node *rear = NULL;
+
+/* Enqueue operation */
+void enqueue() {
+    struct Node *newNode;
+    int value;
+
+    newNode = (struct Node *)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+
+    printf("Enter value to enqueue: ");
+    scanf("%d", &value);
+
+    newNode->data = value;
+    newNode->next = NULL;
+
+    if (rear == NULL) {
+        front = rear = newNode;  // first element
+    } else {
+        rear->next = newNode;
+        rear = newNode;
+    }
+
+    printf("%d enqueued into queue.\n", value);
+}
+
+/* Dequeue operation */
+void dequeue() {
+    if (front == NULL) {
+        printf("Queue underflow! Nothing to dequeue.\n");
+        return;
+    }
+
+    struct Node *temp = front;
+    printf("%d dequeued from queue.\n", temp->data);
+
+    front = front->next;
+    if (front == NULL) {
+        rear = NULL;  // queue becomes empty
+    }
+
+    free(temp);
+}
+
+/* Peek operation */
+void peek() {
+    if (front == NULL) {
+        printf("Queue is empty.\n");
+        return;
+    }
+
+    printf("Front element is: %d\n", front->data);
+}
+
+/* Display queue */
+void display() {
+    if (front == NULL) {
+        printf("Queue is empty.\n");
+        return;
+    }
+
+    struct Node *temp = front;
+    printf("Queue elements (front to rear):\n");
+
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+/* Main menu */
+int main() {
+    int choice;
+
+    do {
+        printf("\n===== QUEUE USING LINKED LIST =====\n");
+        printf("1. Enqueue\n");
+        printf("2. Dequeue\n");
+        printf("3. Peek\n");
+        printf("4. Display\n");
+        printf("5. Exit\n");
+
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                enqueue();
+                break;
+            case 2:
+                dequeue();
+                break;
+            case 3:
+                peek();
+                break;
+            case 4:
+                display();
+                break;
+            case 5:
+                printf("Exiting program. Goodbye!\n");
+                break;
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    } while (choice != 5);
+
+    return 0;
+}
+
+
